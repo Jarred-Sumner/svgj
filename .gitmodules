@@ -1,0 +1,3 @@
+[submodule "svgs"]
+	path = svgs
+	url = https://github.com/leungwensen/svg-icon
