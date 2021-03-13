@@ -47,5 +47,11 @@ ${
 } ${useMemo ? "React.memo(" : ""}(${stringifyProps(props)}) => (
   ${renderJSX(dom, opts)}
 )${useMemo ? ")" : ""};
+
+${
+  exportName !== "default"
+    ? `let src = ${JSON.stringify(content)};\nexport default src;`
+    : ""
+}
 `;
 }

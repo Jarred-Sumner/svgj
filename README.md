@@ -1,6 +1,6 @@
 # svgj
 
-`svgj` quickly converts `.svg` files into `jsx`. `svgj` is about 40x faster than `svgr`.
+`svgj` quickly converts `.svg` files into `jsx`. `svgj` is about 40x faster than `svgr`, depending on how you measure (benchmarks at bottom).
 
 Input:
 
@@ -22,11 +22,11 @@ export const ReactComponent = ({ ...props }) => (
 );
 ```
 
-Its buggier, has a harder to use API, has fewer features, only returns JSX as strings that need to be transpiled, and prints ugly looking JSX.
+Compared to `svgr`, `svgj` is buggier, has a worse API, fewer features, only returns JSX as strings that need to be transpiled, and prints ugly looking JSX.
 
-But its much faster, thanks to using `htmlparser2` and copy-pasted code from `dom-serializer` (with modifications to support JSX and passing in custom props based on element). Consequently, this will often work with html.
+But its much faster, thanks to using `htmlparser2` and serialization logic from `dom-serializer` (with modifications to support JSX and passing in custom props based on element). Consequently, this will often work with html.
 
-You probably only want to use this inside of a bundler where you won't have to look at or manually modify the JSX. Its pretty ugly.
+You probably only want to use this inside of a bundler when importing SVG files as JSX.
 
 ## Usage
 
@@ -134,3 +134,22 @@ svgr (10 files): 20.193ms
 svgj (258 files): 9.493ms
 svgr (258 files): 330.877ms
 ```
+
+### TypeScript
+
+This doesn't generate type definitions.
+
+But, you can google `typescript import svg react`. [Here's the first result](https://duncanleung.com/typescript-module-declearation-svg-img-assets/).
+
+To save you a click, add this `.d.ts` and it should work:
+
+```ts
+declare module "*.svg" {
+  import React = require("react");
+  export const ReactComponent: React.SFC<React.SVGProps<SVGSVGElement>>;
+  const src: string;
+  export default src;
+}
+```
+
+Keep in mind that this currently won't `React.forwardRef`. Per `create-react-app`'s defaults, `src` is the source string and `ReactComponent` is the JSX source.
