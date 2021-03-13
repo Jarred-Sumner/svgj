@@ -14,7 +14,7 @@ let readFile: ReadFileFunction;
 let args = {
   displayName: "ReactComponent",
   jsxImports: "* as React",
-  jsxFrom: "React",
+  jsxFrom: "react",
   exportName: "ReactComponent",
   props: defaultProps,
   opts: defaultOpts,

@@ -70,7 +70,7 @@ export function render(
   content: string,
   displayName: string = "ReactComponent",
   jsxImports: string = "* as React",
-  jsxFrom: string = "React",
+  jsxFrom: string = "react",
   exportName = displayName,
   props = defaultProps,
   opts = defaultOpts,

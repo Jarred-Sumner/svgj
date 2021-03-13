@@ -1,12 +1,30 @@
 {
   "name": "svgj",
-  "version": "1.0.2",
-  "description": "",
+  "version": "1.0.5",
+  "description": "Quickly convert `.svg` files into `jsx`",
   "main": "dist/index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf dist; node build.mjs"
   },
+  "keywords": [
+    "svgj",
+    "svgr",
+    "svg",
+    "svg2jsx",
+    "jsx",
+    "svg-to-jsx",
+    "svg-jsx",
+    "react",
+    "svg-react",
+    "svg2react",
+    "svg-component",
+    "svg-icon",
+    "svg2icon",
+    "icon-component",
+    "jsx-icon",
+    "jsx-icon"
+  ],
   "files": [
     "dist/index.mjs",
     "src/foreignNames.ts",

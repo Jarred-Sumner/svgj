@@ -64,6 +64,14 @@ describe("svgjsx", () => {
     console.log(jsx);
   });
 
+  it("commented", async () => {
+    const simple = await readSVG("commented.svg");
+    const jsx = render(simple);
+
+    assert(jsx);
+    console.log(jsx);
+  });
+
   it("runs bootstrap", async () => {
     const files = readdirSync(
       path.resolve(

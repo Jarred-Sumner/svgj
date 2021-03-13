@@ -264,5 +264,5 @@ function renderCdata(elem: NodeWithChildren) {
 }
 
 function renderComment(elem: DataNode) {
-  return `{/* ${elem.data} */}`;
+  return ``;
 }
