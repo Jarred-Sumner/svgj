@@ -10,7 +10,7 @@ async function run() {
   });
 
   await esbuild.build({
-    entryPoints: ["./src/index.ts", "./src/esbuild-plugin-svgjsx.ts"],
+    entryPoints: ["./src/index.ts"],
     bundle: true,
     external: Object.keys(pkg.dependencies),
     outdir: "dist",

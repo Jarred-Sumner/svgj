@@ -1,3 +1,5 @@
 dist
 svgs-dist
 node_modules
+svgr-dist
+htmls-dist

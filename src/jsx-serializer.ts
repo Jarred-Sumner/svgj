@@ -18,6 +18,12 @@ export interface DomSerializerOptions {
   selfClosingTags?: boolean;
   xmlMode?: boolean | "foreign";
   decodeEntities?: boolean;
+  removeAttrs: { [key: string]: boolean };
+  addProps: {
+    [tagName: string]: {
+      [prop: string]: string;
+    };
+  };
 }
 
 const unencodedElements = new Set([
@@ -40,22 +46,23 @@ function formatAttributes(
 ) {
   if (!attributes) return;
 
-  return Object.keys(attributes)
-    .map((key) => {
-      const value = attributes[key] ?? "";
+  let formatted = "";
 
-      if (opts.xmlMode === "foreign") {
-        /* Fix up mixed-case attribute names */
-        key = attributeNames.get(key) ?? key;
-      }
+  for (let [key, value] of Object.entries(attributes)) {
+    key =
+      key.startsWith("data-") || key.startsWith("aria-")
+        ? key
+        : attributeNames.get(key) ?? camelCase(key);
 
-      if (!opts.emptyAttrs && !opts.xmlMode && value === "") {
-        return key;
-      }
+    if (opts.removeAttrs[key]) continue;
 
-      return `${camelCase(key)}={\`"${value}"\`}`;
-    })
-    .join(" ");
+    if (!value) {
+      formatted += " " + key;
+    } else {
+      formatted += ` ${key}={\`${value || ""}\`}`;
+    }
+  }
+  return formatted.trimStart();
 }
 
 /**
@@ -83,6 +90,25 @@ const singleTag = new Set([
   "wbr",
 ]);
 
+export type Options = {
+  addProps: {
+    [tagName: string]: { [prop: string]: string };
+  };
+  removeAttrs: {
+    [key: string]: boolean;
+  };
+};
+
+export const defaultOpts: Options = Object.freeze({
+  removeAttrs: Object.freeze({
+    xmlns: true,
+  }),
+  addProps: Object.freeze({
+    svg: Object.freeze({
+      props: "...",
+    }),
+  }),
+});
 /**
  * Renders a DOM node or an array of DOM nodes to a string.
  *
@@ -93,7 +119,7 @@ const singleTag = new Set([
  */
 export function renderJSX(
   node: Node | Node[],
-  options: DomSerializerOptions = {}
+  options: DomSerializerOptions = defaultOpts
 ): string {
   // TODO: This is a bit hacky.
   const nodes: Node[] =
@@ -128,6 +154,19 @@ function renderNode(node: Node, options: DomSerializerOptions): string {
   }
 }
 
+function formatProps(propsList: { [key: string]: string }) {
+  let list = "";
+  for (let [propName, value] of Object.entries(propsList)) {
+    if (value === "...") {
+      list += ` {...${propName}}`;
+    } else {
+      list += ` ${propName}={${value}}`;
+    }
+  }
+
+  return list.trimStart();
+}
+
 const foreignModeIntegrationPoints = new Set([
   "mi",
   "mo",
@@ -160,10 +199,16 @@ function renderTag(elem: Element, opts: DomSerializerOptions) {
   }
 
   let tag = `<${elem.name}`;
+
   const attribs = formatAttributes(elem.attribs, opts);
 
   if (attribs) {
     tag += ` ${attribs}`;
+  }
+
+  const props = opts.addProps[elem.tagName.toLowerCase()];
+  if (props) {
+    tag += formatProps(props);
   }
 
   if (
@@ -178,7 +223,19 @@ function renderTag(elem: Element, opts: DomSerializerOptions) {
     tag += "/>";
   } else {
     tag += ">";
-    if (elem.children.length > 0) {
+
+    if (
+      elem.children.length > 0 &&
+      (elem.tagName === "script" ||
+        elem.tagName === "iframe" ||
+        elem.tagName === "style")
+    ) {
+      tag += `dangerouslySetInnerHTML={\``;
+      for (let child of elem.children) {
+        tag += ((child as DataNode).data ?? "").replace(/(\{|\}|`)/gm, "\\$1");
+      }
+      tag += "`}";
+    } else if (elem.children.length > 0) {
       tag += renderJSX(elem.children, opts);
     }
 
@@ -199,7 +256,7 @@ function renderText(elem: DataNode, opts: DomSerializerOptions) {
     return "";
   }
 
-  return `{\`${elem.data || ""}\`}`;
+  return `{\`${(elem.data || "").replace(/(\{|\}|`)/gm, "\\$1")}\`}`;
 }
 
 function renderCdata(elem: NodeWithChildren) {

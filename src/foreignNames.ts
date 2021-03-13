@@ -38,6 +38,9 @@ export const elementNames = new Map<string, string>([
   ["textpath", "textPath"],
 ]);
 export const attributeNames = new Map<string, string>([
+  ["class", "className"],
+  ["id", "id"],
+  ["title", "title"],
   ["definitionurl", "definitionURL"],
   ["attributename", "attributeName"],
   ["attributetype", "attributeType"],

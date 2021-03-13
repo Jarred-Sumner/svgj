@@ -1,0 +1,30 @@
+{
+  "name": "esbuild-plugin-svgj",
+  "version": "1.0.1",
+  "description": "",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild index.ts --outfile=index.mjs --platform=neutral --format=esm"
+  },
+  "files": [
+    "index.mjs",
+    "index.ts"
+  ],
+  "keywords": [
+    "esbuild",
+    "esbuild-plugin",
+    "svg",
+    "svgj",
+    "svgr",
+    "jsx"
+  ],
+  "dependencies": {
+    "svgj": "latest"
+  },
+  "author": "Jarred Sumner @jarred",
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.9.2"
+  }
+}
