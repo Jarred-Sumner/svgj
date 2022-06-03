@@ -1,7 +1,7 @@
 /*
  * Module dependencies
  */
-import ElementType from "domelementtype";
+import { ElementType } from "domelementtype";
 import type { Node, NodeWithChildren, Element, DataNode } from "domhandler";
 import { encodeXML } from "entities";
 import { camelCase } from "lodash-es";
